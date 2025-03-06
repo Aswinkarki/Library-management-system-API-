@@ -1,41 +1,48 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from django.utils.timezone import now
-from datetime import timedelta
-from Students.models import Student
-from Books.models import Book
-from Transactions.models import TransactionModel
+from rest_framework.permissions import IsAuthenticated,AllowAny
+from .serializers import OverdueBorrowerSerializer
+from .repository import DashboardRepository
+from .services import DashboardService
+#from .tasks import send_overdue_emails
 
+# API Views
 class DashboardView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request):
-        total_students = Student.objects.filter(is_deleted=False).count()
-        total_books = Book.objects.filter(is_deleted=False).count()
-        total_transactions = TransactionModel.objects.count()
-        total_borrowed_books = TransactionModel.objects.filter(transaction_type="BORROW").count()
-        total_returned_books = TransactionModel.objects.filter(transaction_type="RETURN").count()
+        """Inject Repository into Service"""
+        dashboard_repo = DashboardRepository()
+        dashboard_service = DashboardService(dashboard_repo)
 
-        # Get overdue borrowers (assuming 7-day borrow period)
-        overdue_days = 30
-        overdue_borrowers = TransactionModel.objects.filter(
-            transaction_type="BORROW",
-            date__lte=now() - timedelta(days=overdue_days)
-        ).select_related("student")
-
-        overdue_list = [
-            {"name": transaction.student.student_name, "borrowed_id": str(transaction.transaction_id)}
-            for transaction in overdue_borrowers
-        ]
-
-        dashboard_data = {
-            "total_student_count": total_students,
-            "total_book_count": total_books,
-            "total_transaction_count": total_transactions,
-            "total_borrowed_books": total_borrowed_books,
-            "total_returned_books": total_returned_books,
-            "overdue_borrowers": overdue_list,
-        }
-
+        dashboard_data = dashboard_service.get_dashboard_data()
         return Response(dashboard_data)
+
+
+class GetOverdueBorrowersView(APIView):
+    """
+    Returns the list of overdue borrowers without sending emails.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        dashboard_repo = DashboardRepository()
+        service = DashboardService(dashboard_repo)
+
+        overdue_borrowers = service.get_overdue_borrowers()
+        serializer = OverdueBorrowerSerializer(overdue_borrowers, many=True)
+        return Response(serializer.data)  # No message, just data
+
+
+class MailOverdueBorrowersView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        dashboard_repo = DashboardRepository()
+        dashboard_service = DashboardService(dashboard_repo)
+
+        try:
+            overdue_borrowers = dashboard_service.email_get_overdue_borrowers()
+            return Response({"message": "Emails sent to overdue borrowers", "count": len(overdue_borrowers)})
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)

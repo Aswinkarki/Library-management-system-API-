@@ -1,4 +1,4 @@
-from Students.models import Student
+from .models import Student
 from .repositories import StudentRepository
 
 class StudentService:
@@ -7,10 +7,10 @@ class StudentService:
     @staticmethod
     def create_student(data):
         """Create and return a new student instance."""
-        user_instance = data['user']  # Authenticated user
+        user_instance = data.get('user')  # Could be None or a User instance
 
-        # Check if a student with the same email and user already exists
-        if Student.objects.filter(email=data.get('email'), user=user_instance).exists():
+        # Check for email uniqueness if user is provided
+        if user_instance and Student.objects.filter(email=data.get('email'), user=user_instance).exists():
             raise ValueError("A student with this email already exists for the user.")
 
         student = Student(

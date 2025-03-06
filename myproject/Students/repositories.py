@@ -22,6 +22,8 @@ class StudentRepository:
     @staticmethod
     def get_students_by_user(user):
         """Retrieve all students belonging to a user."""
+        if user is None:
+            return Student.objects.filter(is_deleted=False).order_by('-created_date')  # All students if no user
         return Student.objects.filter(user=user, is_deleted=False).order_by('-created_date')
 
     @staticmethod

@@ -1,18 +1,23 @@
-# from rest_framework import serializers
-# from Students.models import Student
-# from Books.models import Book
-# from Transactions.models import TransactionModel
+from rest_framework import serializers
+from .models import Dashboard, OverdueBorrower
 
+class OverdueBorrowerSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source="Students.student_name", read_only=True)
 
-# class OverdueBorrowerSerializer(serializers.Serializer):
-#     name = serializers.CharField()
-#     borrowed_id = serializers.CharField()
+    class Meta:
+        model = OverdueBorrower
+        fields = ["student_name", "borrowed_id"]
+        
+class DashboardSerializer(serializers.ModelSerializer):
+    overdue_borrowers = OverdueBorrowerSerializer(many=True, read_only=True)
 
-
-# class DashboardSerializer(serializers.Serializer):
-#     total_student_count = serializers.IntegerField()
-#     total_book_count = serializers.IntegerField()
-#     total_transaction_count = serializers.IntegerField()
-#     total_borrowed_books = serializers.IntegerField()
-#     total_returned_books = serializers.IntegerField()
-#     overdue_borrowers = OverdueBorrowerSerializer(many=True)
+    class Meta:
+        model = Dashboard
+        fields = [
+            'total_student_count',
+            'total_book_count',
+            'total_transaction_count',
+            'total_borrowed_books',
+            'total_returned_books',
+            'overdue_borrowers',
+        ]

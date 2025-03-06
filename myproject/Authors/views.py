@@ -1,13 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from .services import AuthorService
 from .serializers import AuthorSerializer
 from rest_framework.exceptions import NotFound
 
 class AuthorListView(APIView):
-    permission_classes = [IsAuthenticated]  # Add this line to require authentication
+    permission_classes = [AllowAny]  # Add this line to require authentication
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -33,7 +33,7 @@ class AuthorListView(APIView):
 
 
 class AuthorDetailView(APIView):
-    permission_classes = [IsAuthenticated]  # Add this line to require authentication
+    permission_classes = [AllowAny]  # Add this line to require authentication
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
