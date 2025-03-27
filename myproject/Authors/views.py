@@ -7,7 +7,7 @@ from .serializers import AuthorSerializer
 from rest_framework.exceptions import NotFound
 
 class AuthorListView(APIView):
-    permission_classes = [AllowAny]  # Add this line to require authentication
+    permission_classes = [IsAuthenticated]  # Add this line to require authentication
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -33,7 +33,7 @@ class AuthorListView(APIView):
 
 
 class AuthorDetailView(APIView):
-    permission_classes = [AllowAny]  # Add this line to require authentication
+    permission_classes = [IsAuthenticated]  # Add this line to require authentication
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

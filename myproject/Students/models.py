@@ -12,17 +12,14 @@ class Student(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
-
-    def save(self, *args, **kwargs):
-        if not self.email:
-            self.email = f"student_{uuid.uuid4()}@domain.com"
+    
+def save(self, *args, **kwargs):
+    if not self.email and not self.student_id:  # Only generate email for new students
+        self.email = f"student_{uuid.uuid4()}@domain.com"
         attempt = 1
         while Student.objects.filter(email=self.email).exists():
             self.email = f"student_{uuid.uuid4()}@domain.com"
             attempt += 1
             if attempt > 10:
                 raise ValueError("Unable to generate a unique email after multiple attempts")
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.student_name
+    super().save(*args, **kwargs)

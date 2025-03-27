@@ -2,8 +2,8 @@ from rest_framework import serializers
 from .models import Dashboard, OverdueBorrower
 
 class OverdueBorrowerSerializer(serializers.ModelSerializer):
-    student_name = serializers.CharField(source="Students.student_name", read_only=True)
-
+    student_name = serializers.CharField(source="student.student_name", read_only=True)
+    
     class Meta:
         model = OverdueBorrower
         fields = ["student_name", "borrowed_id"]

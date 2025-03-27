@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import AuthenticationFailed
 from .serializers import RegistrationSerializer, LoginSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 from .services import UserService
 
 class RegisterUserView(APIView):
@@ -41,3 +42,20 @@ class LoginUserView(APIView):
                 return Response({"message": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class RefreshTokenView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        refresh_token = request.data.get("refresh")
+
+        if not refresh_token:
+            return Response({"message": "Refresh token is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            refresh = RefreshToken(refresh_token)
+            return Response({"access": str(refresh.access_token)}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"message": "Invalid refresh token"}, status=status.HTTP_401_UNAUTHORIZED)

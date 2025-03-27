@@ -8,7 +8,7 @@ from Books.serializers import BookSerializer
 from Authors.models import Author
 
 class BookListView(APIView):
-    permission_classes = [AllowAny]  # Only authenticated users can access
+    permission_classes = [IsAuthenticated]  # Only authenticated users can access
 
     def get(self, request):
         service = BookService()
@@ -41,7 +41,7 @@ class BookListView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class BookDetailView(APIView):
-    permission_classes = [AllowAny]  # Only authenticated users can access
+    permission_classes = [IsAuthenticated]  # Only authenticated users can access
 
     def get(self, request, book_id):
         service = BookService()

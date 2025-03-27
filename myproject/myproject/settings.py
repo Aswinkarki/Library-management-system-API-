@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'Books',
     'Dashboard',
 ]
+from datetime import timedelta
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -100,7 +101,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-# Replace this with your Gmail App Password
+EMAIL_HOST_USER = "gartaulapratiksha81@gmail.com"
+EMAIL_HOST_PASSWORD = "poxx dpey vqfu qgbd"  # Replace this with your Gmail App Password
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
@@ -175,8 +177,8 @@ from datetime import timedelta
 
 SIMPLE_JWT = {
     'USER_ID_FIELD': 'userId',  # Use the correct primary key field name
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5), 
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': True,

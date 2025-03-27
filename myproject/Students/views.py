@@ -1,13 +1,13 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 from .services import StudentService
 from .serializers import StudentSerializer
 
 class StudentListCreateView(APIView):
     """Handles listing and creating students."""
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         # If authenticated, filter by user; otherwise, return all students
@@ -40,7 +40,7 @@ class StudentListCreateView(APIView):
 
 class StudentDetailView(APIView):
     """Handles retrieving, updating, and deleting a student."""
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, student_id):
         student = StudentService.get_student(student_id)

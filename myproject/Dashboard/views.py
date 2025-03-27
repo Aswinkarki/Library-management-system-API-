@@ -8,7 +8,7 @@ from .services import DashboardService
 
 # API Views
 class DashboardView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         """Inject Repository into Service"""
@@ -23,7 +23,7 @@ class GetOverdueBorrowersView(APIView):
     """
     Returns the list of overdue borrowers without sending emails.
     """
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         dashboard_repo = DashboardRepository()
@@ -35,7 +35,7 @@ class GetOverdueBorrowersView(APIView):
 
 
 class MailOverdueBorrowersView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         dashboard_repo = DashboardRepository()
